@@ -25,6 +25,25 @@ def DFS(matrix, start, end):
    
     path=[]
     visited={}
+    visited[start]= start
+
+    stack = [start]
+    while len(stack):
+        node = stack.pop()
+        if node == end:
+            break
+        for i in range(len(matrix[node])):
+            if matrix[node][i] == 1 and i not in visited:
+                visited[i] = node
+                stack.insert(0, i)
+                
+    
+    cur = end
+    while cur != start:
+        path.append(cur)
+        cur = visited[cur]
+    path.append(start)
+    path.reverse()
 
     return visited, path
 
