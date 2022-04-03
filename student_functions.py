@@ -186,6 +186,32 @@ def GBFS(matrix, start, end):
     # TODO: 
     path=[]
     visited={}
+
+    queue = PriorityQueue() # h = edge weights
+    queue.put((0, start))
+    visited[start]= start
+
+    while True:
+        if queue.empty():
+            return visited, path
+
+        node = queue.get()
+        # print('GET', node)
+        if node[1] == end:
+            break
+        for i in range(len(matrix[node[1]])):
+            if matrix[node[1]][i] != 0 and i not in visited:
+                visited[i] = node[1]
+                queue.put((matrix[node[1]][i], i))
+                # print('PUT', (matrix[node[1]][i], i))
+            # print('visited', visited)
+    cur = end
+    while cur != start:
+        path.append(cur)
+        cur = visited[cur]
+    path.append(start)
+    path.reverse()
+
     return visited, path
 
 def Astar(matrix, start, end, pos):
@@ -218,3 +244,4 @@ def Astar(matrix, start, end, pos):
 # https://gist.github.com/professormahi/cff4bfeaece05966e688658127bf41f3
 # https://stackoverflow.com/questions/46223338/check-if-element-exists-in-priorityqueue-of-tuples
 # https://likegeeks.com/python-priority-queue/
+# https://en.wikipedia.org/wiki/Best-first_search
