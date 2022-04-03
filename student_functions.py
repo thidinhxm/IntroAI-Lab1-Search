@@ -1,3 +1,5 @@
+from queue import PriorityQueue, Queue
+import queue
 import numpy as np
 
 
@@ -28,12 +30,14 @@ def DFS(matrix, start, end):
     visited[start]= start
 
     stack = [start]
-    while len(stack):
+    while True:
+        if len(stack) == 0:
+            return visited, path
         node = stack.pop()
         if node == end:
             break
         for i in range(len(matrix[node])):
-            if matrix[node][i] == 1 and i not in visited:
+            if matrix[node][i] != 0 and i not in visited:
                 visited[i] = node
                 stack.insert(0, i)
                 
@@ -72,9 +76,30 @@ def BFS(matrix, start, end):
     
     path=[]
     visited={}
-   
-    return visited, path
+    visited[start]= start
+    queue = Queue()
+    queue.put(start)
+ 
+    while True:
+        if queue.empty():
+            return visited, path
 
+        node = queue.get()
+        if node == end:
+            break
+        for i in range(len(matrix[node])):
+            if matrix[node][i] != 0 and i not in visited:
+                visited[i] = node
+                queue.put(i)
+    
+    cur = end
+    while cur != start:
+        path.append(cur)
+        cur = visited[cur]
+    path.append(start)
+    path.reverse()
+    return visited, path
+    
 
 def UCS(matrix, start, end):
     """
@@ -99,6 +124,37 @@ def UCS(matrix, start, end):
     # TODO:  
     path=[]
     visited={}
+    visited[start]= start
+    queue = PriorityQueue()
+    queue.put((0, start))
+    closed = []
+    while True:
+        if queue.empty():
+            return visited, path
+
+        node = queue.get()
+        print('GET', node)
+        if (node[1] in closed):
+            continue
+        closed.append(node[1])
+        if node[1] == end:
+            break
+        for i in range(len(matrix[node[1]])):
+            if matrix[node[1]][i] != 0:
+                if i not in closed:
+                    visited[i] = node[1]
+                    queue.put((matrix[node[1]][i] + node[0], i))
+                    print('PUT', (matrix[node[1]][i] + node[0], i))
+                elif matrix[node[1]][i] + node[0] < queue.queue[-1][0]:
+                    queue.put((matrix[node[1]][i] + node[0], i))
+                    print('PUT', (matrix[node[1]][i] + node[0], i))
+    
+    cur = end
+    while cur != start:
+        path.append(cur)
+        cur = visited[cur]
+    path.append(start)
+    path.reverse()
     return visited, path
 
 
