@@ -125,29 +125,34 @@ def UCS(matrix, start, end):
     path=[]
     visited={}
     visited[start]= start
-    queue = PriorityQueue()
+    queue = PriorityQueue() # PriorityQueue is a queue that sorts items by a given key (cost) function.
     queue.put((0, start))
     closed = []
     while True:
-        if queue.empty():
+        if queue.empty(): # if queue is empty, no path is found
             return visited, path
 
-        node = queue.get()
-        print('GET', node)
-        if (node[1] in closed):
+        node = queue.get() # get the node with the lowest cost
+        # print('GET', node)
+        if (node[1] in closed): # if node is in closed list, ignore it
             continue
-        closed.append(node[1])
-        if node[1] == end:
+
+        closed.append(node[1]) # add node to closed list
+        if node[1] == end: # if node is the end node, break
             break
         for i in range(len(matrix[node[1]])):
-            if matrix[node[1]][i] != 0:
-                if i not in closed:
-                    visited[i] = node[1]
-                    queue.put((matrix[node[1]][i] + node[0], i))
-                    print('PUT', (matrix[node[1]][i] + node[0], i))
-                elif matrix[node[1]][i] + node[0] < queue.queue[-1][0]:
-                    queue.put((matrix[node[1]][i] + node[0], i))
-                    print('PUT', (matrix[node[1]][i] + node[0], i))
+            if matrix[node[1]][i] != 0: # if node has adjacent nodes
+                if i not in closed: # if adjacent node is not in closed list
+                    check = True # check if can add adjacent node to queue
+                    for item in queue.queue:
+                        if item[1] == i and item[0] < node[0] + matrix[node[1]][i]: # if adjacent node is in queue and cost is lower than current cost
+                            check = False
+                            break
+                    if check == True:
+                        queue.put((node[0] + matrix[node[1]][i], i)) # add adjacent node to queue
+                        # print('PUT', (node[0] + matrix[node[1]][i], i))
+                        visited[i] = node[1]
+            # print('visited', visited)
     
     cur = end
     while cur != start:
@@ -209,3 +214,7 @@ def Astar(matrix, start, end, pos):
     visited={}
     return visited, path
 
+# references
+# https://gist.github.com/professormahi/cff4bfeaece05966e688658127bf41f3
+# https://stackoverflow.com/questions/46223338/check-if-element-exists-in-priorityqueue-of-tuples
+# https://likegeeks.com/python-priority-queue/
