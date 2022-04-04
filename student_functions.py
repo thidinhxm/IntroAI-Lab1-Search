@@ -1,7 +1,6 @@
 from queue import PriorityQueue, Queue
-import queue
 import numpy as np
-
+from math import sqrt
 
 def DFS(matrix, start, end):
     """
@@ -214,6 +213,9 @@ def GBFS(matrix, start, end):
 
     return visited, path
 
+def euclidean_distance(x, y):
+    return sqrt((x[0] - y[0]) ** 2 + (x[1] - y[1]) ** 2)
+
 def Astar(matrix, start, end, pos):
     """
     A* Search algorithm
@@ -238,6 +240,48 @@ def Astar(matrix, start, end, pos):
     # TODO: 
     path=[]
     visited={}
+
+    open = set([start])
+    closed = set([])
+    g = {}  # g[node] = cost to get to node
+    g[start] = 0
+
+    visited[start] = start
+
+    while len(open) > 0:
+        node = None
+        for i in open:
+            if node == None or g[i] + euclidean_distance(pos[i], pos[end]) < g[node] + euclidean_distance(pos[i], pos[end]): # find f min in open
+                node = i
+                # print('node', node)
+                
+
+        
+        if node == None:
+            return visited, path
+        
+        if node == end: # if node is the end node, track back to find path and return
+            while node != start:
+                path.append(node)
+                node = visited[node]
+            path.append(start)
+            path.reverse()
+            return visited, path
+
+        for i in range(len(matrix[node])): # add adjacent nodes to open list if not in closed list and not in open list, and update g
+            if matrix[node][i] != 0 and i not in closed:
+                if i not in open:
+                    open.add(i)
+                    # print('open1', open)
+                if i not in g or g[node] + matrix[node][i] < g[i]:
+                    g[i] = g[node] + matrix[node][i]
+                    # print('g', g)
+                    visited[i] = node
+
+        open.remove(node)
+        # print('open2', open)
+        closed.add(node)
+
     return visited, path
 
 # references
@@ -245,3 +289,7 @@ def Astar(matrix, start, end, pos):
 # https://stackoverflow.com/questions/46223338/check-if-element-exists-in-priorityqueue-of-tuples
 # https://likegeeks.com/python-priority-queue/
 # https://en.wikipedia.org/wiki/Best-first_search
+# https://www.geeksforgeeks.org/best-first-search-informed-search/
+# https://github.com/ademakdogan/Implementation-of-A-Algorithm-Visualization-via-Pyp5js-
+# https://towardsdatascience.com/understanding-a-path-algorithms-and-implementation-with-python-4d8458d6ccc7
+# https://scikit-learn.org/stable/modules/generated/sklearn.metrics.pairwise.euclidean_distances.html
