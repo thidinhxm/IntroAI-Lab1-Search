@@ -38,7 +38,7 @@ def DFS(matrix, start, end):
         for i in range(len(matrix[node])):
             if matrix[node][i] != 0 and i not in visited:
                 visited[i] = node
-                stack.insert(0, i)
+                stack.append(i)
                 
     
     cur = end
